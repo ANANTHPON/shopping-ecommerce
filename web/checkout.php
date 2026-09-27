@@ -53,7 +53,7 @@
 <!-- Minimal Header -->
 <header class="checkout-header">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-decoration-none" href="grid.php"><i class="fa-solid fa-store me-2"></i>VayaShop</a>
+        <a class="navbar-brand text-decoration-none" href="index.php"><i class="fa-solid fa-store me-2"></i>VayaShop</a>
         <div class="text-muted fw-bold"><i class="fa-solid fa-lock me-2 text-success"></i>Secure Checkout</div>
     </div>
 </header>
@@ -63,7 +63,7 @@
     <i class="fa-solid fa-cart-arrow-down fa-4x text-muted mb-4 opacity-50"></i>
     <h2 class="fw-bold text-dark">Your cart is empty!</h2>
     <p class="text-muted mb-4">You can't checkout without any items.</p>
-    <a href="grid.php" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm" style="background-color: #ff4757; border:none;">Return to Shop</a>
+    <a href="index.php" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm" style="background-color: #ff4757; border:none;">Return to Shop</a>
 </div>
 
 <!-- Main Checkout Form -->
@@ -278,7 +278,7 @@
             alert("Success! Your order has been placed. Thank you for shopping with VayaShop!");
             
             // Redirect back to home
-            window.location.href = 'grid.php';
+            window.location.href = 'index.php';
         }, 1500);
     }
 </script>
