@@ -40,21 +40,13 @@ try {
     
     if(!isset($_SESSION['tracked_visit']) && !$is_logged_in) {
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
-        $location = 'Local/Unknown';
-        if($ip !== '127.0.0.1' && $ip !== '::1' && $ip !== 'Unknown') {
-            $api_url = "http://ip-api.com/json/{$ip}?fields=city,country";
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $api_url); curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); curl_setopt($ch, CURLOPT_TIMEOUT, 2);
-            $response = curl_exec($ch); curl_close($ch);
-            if($response) { $data = json_decode($response, true); if(isset($data['city']) && isset($data['country'])) { $location = $data['city'] . ', ' . $data['country']; } }
-        } else {
-            $location = 'Localhost (Your PC)';
-        }
+        $location = 'Remote User';
         try { 
             $stmt = $pdo->prepare("INSERT INTO ecom_visitors (ip_address, location) VALUES (?, ?)");
             $stmt->execute([$ip, $location]);
             $_SESSION['tracked_visit'] = true; 
         } catch(Exception $e) {}
+
     }
 
     if (isset($_GET['logout'])) { session_destroy(); header("Location: grid.php"); exit; }
