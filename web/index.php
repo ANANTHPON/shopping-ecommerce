@@ -6,8 +6,8 @@ error_reporting(E_ALL);
 if(empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 
 $host_name = $_SERVER['HTTP_HOST'] ?? 'localhost';
-if (strpos($host_name, 'infinityfree') !== false || strpos($host_name, 'epizy') !== false) {
-    $host = 'sql107.infinityfree.com'; $db = 'if0_43023269_kpshop_dev'; $db_user = 'if0_43023269'; $db_pass = 'Suresh130192';
+if ($host_name !== 'localhost' && $host_name !== '127.0.0.1') {
+    $host = 'localhost'; $db = 'anapm_kpashop_live'; $db_user = 'anapm_kpashop_live'; $db_pass = 'Suresh130192@';
     $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];
     $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
 } else {
