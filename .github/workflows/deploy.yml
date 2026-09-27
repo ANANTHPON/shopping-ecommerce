@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./web/
-        server-dir: /www/kpashop.com/
+        server-dir: /kpashop.com/
         exclude: |
           **/.git*
           **/.git*/**
