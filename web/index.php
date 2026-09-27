@@ -23,20 +23,20 @@ $user_role = $_SESSION['role'] ?? 'Customer';
 
 try {
     $pdo = new PDO($dsn, $db_user, $db_pass, $options);
-
-
-    $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, email VARCHAR(100) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, role VARCHAR(20) DEFAULT 'Customer')");
-    $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_products (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, price DECIMAL(10,2) NOT NULL, category VARCHAR(50) NOT NULL, stock INT DEFAULT 10, image_url VARCHAR(255) DEFAULT 'https://via.placeholder.com/300')");
-    try { $pdo->exec("ALTER TABLE ecom_products ADD COLUMN stock INT DEFAULT 10"); } catch(Exception $e) {}
-    try { $pdo->exec("ALTER TABLE ecom_products ADD COLUMN mrp DECIMAL(10,2) DEFAULT 0"); } catch(Exception $e) {}
-    $pdo->exec("UPDATE ecom_users SET role = 'Admin' WHERE username = 'admin' OR username = 'Admin'");
-    $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_categories (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL UNIQUE)");
-    if($pdo->query("SELECT COUNT(*) FROM ecom_categories")->fetchColumn() == 0) { $pdo->exec("INSERT INTO ecom_categories (name) VALUES ('Electronics'), ('Fashion'), ('Accessories')"); }
-    $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_waitlist (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, phone VARCHAR(20), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
     
-    // VISITOR ANALYTICS TABLE WITH LOCATION
-    $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_visitors (id INT AUTO_INCREMENT PRIMARY KEY, ip_address VARCHAR(50), location VARCHAR(100) DEFAULT 'Unknown', visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
-    try { $pdo->exec("ALTER TABLE ecom_visitors ADD COLUMN location VARCHAR(100) DEFAULT 'Unknown'"); } catch(Exception $e) {}
+    $tableExists = $pdo->query("SHOW TABLES LIKE 'ecom_products'")->rowCount() > 0;
+    if (!$tableExists) {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, email VARCHAR(100) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, role VARCHAR(20) DEFAULT 'Customer')");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_products (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, price DECIMAL(10,2) NOT NULL, category VARCHAR(50) NOT NULL, stock INT DEFAULT 10, image_url VARCHAR(255) DEFAULT 'https://via.placeholder.com/300')");
+        try { $pdo->exec("ALTER TABLE ecom_products ADD COLUMN stock INT DEFAULT 10"); } catch(Exception $e) {}
+        try { $pdo->exec("ALTER TABLE ecom_products ADD COLUMN mrp DECIMAL(10,2) DEFAULT 0"); } catch(Exception $e) {}
+        $pdo->exec("UPDATE ecom_users SET role = 'Admin' WHERE username = 'admin' OR username = 'Admin'");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_categories (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL UNIQUE)");
+        if($pdo->query("SELECT COUNT(*) FROM ecom_categories")->fetchColumn() == 0) { $pdo->exec("INSERT INTO ecom_categories (name) VALUES ('Electronics'), ('Fashion'), ('Accessories')"); }
+        $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_waitlist (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, phone VARCHAR(20), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_visitors (id INT AUTO_INCREMENT PRIMARY KEY, ip_address VARCHAR(50), location VARCHAR(100) DEFAULT 'Unknown', visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
+        try { $pdo->exec("ALTER TABLE ecom_visitors ADD COLUMN location VARCHAR(100) DEFAULT 'Unknown'"); } catch(Exception $e) {}
+    }
     
     if(!isset($_SESSION['tracked_visit']) && !$is_logged_in) {
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
