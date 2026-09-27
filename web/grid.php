@@ -5,8 +5,17 @@ error_reporting(E_ALL);
 
 if(empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 
-$host = '127.0.0.1'; $db = 'drupal10_db'; $db_user = 'root'; $db_pass = ''; $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
-$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];
+$host_name = $_SERVER['HTTP_HOST'] ?? 'localhost';
+if (strpos($host_name, 'infinityfree') !== false || strpos($host_name, 'epizy') !== false) {
+    $host = 'sql107.infinityfree.com'; $db = 'if0_43023269_kpshop_dev'; $db_user = 'if0_43023269'; $db_pass = 'Suresh130192';
+    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];
+    $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+} else {
+    $host = '127.0.0.1'; $db = 'drupal10_db_dev'; $db_user = 'root'; $db_pass = ''; 
+    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];
+    try { $pdo_setup = new PDO("mysql:host=$host;charset=utf8mb4", $db_user, $db_pass, $options); $pdo_setup->exec("CREATE DATABASE IF NOT EXISTS `$db`"); } catch(Exception $e) {}
+    $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+}
 
 $auth_error = ''; $auth_success = '';
 $is_logged_in = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
@@ -14,6 +23,8 @@ $user_role = $_SESSION['role'] ?? 'Customer';
 
 try {
     $pdo = new PDO($dsn, $db_user, $db_pass, $options);
+
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, email VARCHAR(100) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, role VARCHAR(20) DEFAULT 'Customer')");
     $pdo->exec("CREATE TABLE IF NOT EXISTS ecom_products (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, price DECIMAL(10,2) NOT NULL, category VARCHAR(50) NOT NULL, stock INT DEFAULT 10, image_url VARCHAR(255) DEFAULT 'https://via.placeholder.com/300')");
     try { $pdo->exec("ALTER TABLE ecom_products ADD COLUMN stock INT DEFAULT 10"); } catch(Exception $e) {}
